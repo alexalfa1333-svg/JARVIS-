@@ -2,48 +2,205 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>JARVIS - IZAX Agent</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>JARVIS - IZAX AI Agent</title>
 <style>
-* { margin:0; padding:0; box-sizing:border-box; font-family: 'Segoe UI', Arial, sans-serif; }
-body { background:#020617; color:#fff; min-height:100vh; display:flex; flex-direction:column; align-items:center; }
-.header { text-align:center; padding:30px 20px 10px; }
-.core { width:140px; height:140px; border-radius:50%; background:#0ea5e9; display:flex; align-items:center; justify-content:center; font-weight:800; font-size:22px; color:#020617; letter-spacing:2px; box-shadow:0 0 0 12px #0ea5e922, 0 0 0 26px #0ea5e911, 0 0 60px #0ea5e9; margin:20px auto; }
-.ring { width:210px; height:210px; border:1px solid #0ea5e955; border-radius:50%; position:absolute; top:95px; }
-.status { color:#22c55e; font-size:13px; letter-spacing:2px; font-weight:700; margin-top:10px; }
-.subtitle { color:#94a3b8; font-size:14px; margin-top:6px; }
-.chat { width:100%; max-width:680px; flex:1; padding:20px; overflow-y:auto; display:flex; flex-direction:column; gap:12px; }
-.msg { padding:14px 16px; border-radius:14px; max-width:85%; line-height:1.5; font-size:15px; white-space:pre-wrap; }
-.msg.jarvis { background:#0f172a; border:1px solid #1e293b; align-self:flex-start; }
-.msg.user { background:#0ea5e9; color:#020617; font-weight:600; align-self:flex-end; }
-.label { font-size:11px; letter-spacing:1.5px; font-weight:800; margin-bottom:6px; opacity:0.7; }
-.controls { width:100%; max-width:680px; padding:12px 20px; display:flex; gap:8px; flex-wrap:wrap; justify-content:center; }
-.btn { background:#0f172a; border:1px solid #1e293b; color:#fff; padding:9px 14px; border-radius:999px; font-size:13px; cursor:pointer; }
-.btn:hover { background:#0ea5e9; color:#020617; }
-.input-area { width:100%; max-width:680px; padding:14px 20px 22px; display:flex; gap:10px; }
-input { flex:1; background:#0f172a; border:1px solid #1e293b; color:#fff; padding:14px 16px; border-radius:999px; outline:none; font-size:15px; }
-.send { background:#0ea5e9; color:#020617; border:none; padding:0 22px; border-radius:999px; font-weight:800; cursor:pointer; }
-.lang { font-size:12px; color:#94a3b8; text-align:center; padding-bottom:4px; }
+:root{
+  --bg:#020617; --panel:#0b1226; --line:#1e293b; --text:#f1f5f9; --muted:#94a3b8;
+  --accent:#38bdf8; --accent-ink:#021019; --ok:#22c55e;
+}
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',system-ui,-apple-system,Arial,sans-serif}
+html,body{height:100%}
+body{background:var(--bg);color:var(--text);display:flex;flex-direction:column;align-items:center;
+  padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bottom)}
+
+/* Header */
+.header{text-align:center;padding:22px 20px 8px;width:100%;max-width:680px}
+.orb-wrap{position:relative;width:150px;height:150px;margin:0 auto 14px;display:grid;place-items:center}
+.ring{position:absolute;inset:-18px;border:1px solid #38bdf855;border-radius:50%;animation:spin 14s linear infinite;
+  border-top-color:var(--accent)}
+.core{width:120px;height:120px;border-radius:50%;background:var(--accent);display:grid;place-items:center;
+  font-weight:800;font-size:19px;letter-spacing:3px;color:var(--accent-ink);
+  box-shadow:0 0 0 10px #38bdf822,0 0 0 22px #38bdf80f,0 0 50px #38bdf8aa}
+.core.thinking{animation:pulse 1s ease-in-out infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes pulse{50%{transform:scale(1.06)}}
+.status{color:var(--ok);font-size:12px;letter-spacing:2px;font-weight:700}
+.subtitle{color:var(--muted);font-size:13px;margin-top:6px;line-height:1.45}
+
+/* Chat */
+.chat{width:100%;max-width:680px;flex:1;min-height:0;padding:14px 18px;overflow-y:auto;
+  display:flex;flex-direction:column;gap:10px;scroll-behavior:smooth}
+.msg{padding:12px 15px;border-radius:16px;max-width:86%;line-height:1.55;font-size:15px;white-space:pre-wrap;word-wrap:break-word}
+.msg.jarvis{background:var(--panel);border:1px solid var(--line);align-self:flex-start;border-top-left-radius:4px}
+.msg.user{background:var(--accent);color:var(--accent-ink);font-weight:600;align-self:flex-end;border-top-right-radius:4px}
+.label{font-size:10.5px;letter-spacing:1.5px;font-weight:800;margin-bottom:4px;opacity:.6}
+.typing span{display:inline-block;width:6px;height:6px;margin-right:4px;border-radius:50%;background:var(--muted);animation:blink 1s infinite}
+.typing span:nth-child(2){animation-delay:.2s}.typing span:nth-child(3){animation-delay:.4s}
+@keyframes blink{0%,80%,100%{opacity:.25}40%{opacity:1}}
+
+/* Quick buttons */
+.controls{width:100%;max-width:680px;padding:8px 18px;display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+.btn{background:var(--panel);border:1px solid var(--line);color:var(--text);padding:9px 14px;border-radius:999px;
+  font-size:13px;cursor:pointer;transition:.15s}
+.btn:hover,.btn:focus-visible{background:var(--accent);color:var(--accent-ink);outline:none}
+.lang{font-size:12px;color:var(--muted);text-align:center;padding:2px 0 6px}
+
+/* Input */
+.input-area{width:100%;max-width:680px;padding:6px 18px 18px;display:flex;gap:10px}
+input{flex:1;min-width:0;background:var(--panel);border:1px solid var(--line);color:var(--text);padding:14px 16px;
+  border-radius:999px;outline:none;font-size:16px}
+input:focus{border-color:var(--accent)}
+.send{background:var(--accent);color:var(--accent-ink);border:none;padding:0 22px;border-radius:999px;font-weight:800;cursor:pointer}
+.send:focus-visible{outline:2px solid #fff}
+
+@media (prefers-reduced-motion:reduce){.ring,.core.thinking,.typing span{animation:none}}
 </style>
 </head>
 <body>
+
 <div class="header">
-<div style="position:relative; display:flex; justify-content:center;"><div class="ring"></div><div class="core">JARVIS</div></div>
-<div class="status">JARVIS AGENT - ONLINE</div>
-<div class="subtitle">IZAX Personal AI Agent. English by default. Auto-detects client language.</div>
+  <div class="orb-wrap">
+    <div class="ring"></div>
+    <div class="core" id="core">JARVIS</div>
+  </div>
+  <div class="status">JARVIS AGENT - ONLINE</div>
+  <div class="subtitle">IZAX Personal AI Agent. English by default. Auto-detects client language.</div>
 </div>
-<div class="chat" id="chat"></div>
+
+<div class="chat" id="chat" aria-live="polite"></div>
+
 <div class="controls">
-<button class="btn" onclick="quick('I need a Logo')">Logo Design</button>
-<button class="btn" onclick="quick('I need a Website')">Website</button>
-<button class="btn" onclick="quick('What are your prices?')">Prices</button>
-<button class="btn" onclick="quick('I want to place an order')">Place Order</button>
+  <button class="btn" onclick="quick('I need a Logo')">Logo Design</button>
+  <button class="btn" onclick="quick('I need a Website')">Website</button>
+  <button class="btn" onclick="quick('What are your prices?')">Prices</button>
+  <button class="btn" onclick="quick('I want to place an order')">Place Order</button>
 </div>
+
 <div class="lang" id="langLabel">Detected Language: English</div>
+
 <div class="input-area">
-<input id="input" placeholder="Type a message to JARVIS..." onkeydown="if(event.key==='Enter') send()" />
-<button class="send" onclick="send()">SEND</button>
+  <input id="input" placeholder="Type a message to JARVIS..." autocomplete="off"
+         onkeydown="if(event.key==='Enter') send()" />
+  <button class="send" onclick="send()">SEND</button>
 </div>
-<script src="script.js"></script>
+
+<script>
+/* ================= SETTINGS (edit these) ================= */
+const CONFIG = {
+  brand: "IZAX",
+  whatsapp: "94XXXXXXXXX",          // <-- உங்க WhatsApp number (country code-oda, + illama)
+  email: "yourmail@example.com",     // <-- உங்க email
+  currency: "USD",
+  prices: {
+    logo:    "Logo Design: from 15 USD",
+    website: "Website: from 60 USD",
+    social:  "Social media post pack: from 10 USD"
+  }
+};
+
+/* ================= LANGUAGE DETECTION ================= */
+function detectLang(t){
+  if (/[\u0B80-\u0BFF]/.test(t)) return "Tamil";
+  if (/[\u0D80-\u0DFF]/.test(t)) return "Sinhala";
+  if (/[\u0900-\u097F]/.test(t)) return "Hindi";
+  if (/[\u0600-\u06FF]/.test(t)) return "Arabic";
+  if (/\b(enna|epdi|vendum|venum|illa|irukku|panni|kudunga|anna|thambi|nanba|vanakkam|evlo|vilai)\b/i.test(t)) return "Tanglish";
+  return "English";
+}
+
+/* ================= REPLIES ================= */
+const T = {
+  English: {
+    hello:"Hello. I am JARVIS, the " + CONFIG.brand + " AI Agent.\n\nI am online and ready to help you 24/7.\n\nWhat do you need? Logo Design, Website, Prices, or Place an Order?",
+    logo:"Logo Design.\n\nTo start, please send me:\n1. Business name\n2. Preferred colors\n3. Style (modern, classic, minimal)\n\nThen type \"order\" to confirm.",
+    website:"Website.\n\nPlease tell me:\n1. What the website is for\n2. How many pages you need\n3. Any sites you like\n\nThen type \"order\" to confirm.",
+    prices:"Prices\n\n• " + CONFIG.prices.logo + "\n• " + CONFIG.prices.website + "\n• " + CONFIG.prices.social + "\n\nFinal price depends on your requirements.",
+    order:"Great. To place your order, message us on WhatsApp:\nhttps://wa.me/" + CONFIG.whatsapp + "\n\nor email: " + CONFIG.email + "\n\nPlease include your name, service, and deadline.",
+    thanks:"You are welcome. Anything else I can help with?",
+    fallback:"I can help with Logo Design, Website, Prices, or placing an Order. Which one do you need?"
+  },
+  Tamil: {
+    hello:"வணக்கம். நான் JARVIS, " + CONFIG.brand + " AI Agent.\n\nநான் 24/7 உங்களுக்கு உதவ தயாராக இருக்கிறேன்.\n\nஉங்களுக்கு என்ன வேண்டும்? Logo, Website, Prices, அல்லது Order?",
+    logo:"Logo Design.\n\nதயவுசெய்து அனுப்புங்கள்:\n1. Business பெயர்\n2. விருப்பமான நிறங்கள்\n3. Style (modern, classic, minimal)\n\nபிறகு \"order\" என டைப் செய்யுங்கள்.",
+    website:"Website.\n\nதயவுசெய்து சொல்லுங்கள்:\n1. Website எதற்காக\n2. எத்தனை pages\n3. பிடித்த sites\n\nபிறகு \"order\" என டைப் செய்யுங்கள்.",
+    prices:"விலை விவரம்\n\n• " + CONFIG.prices.logo + "\n• " + CONFIG.prices.website + "\n• " + CONFIG.prices.social + "\n\nஇறுதி விலை உங்கள் தேவையைப் பொறுத்தது.",
+    order:"சரி. Order செய்ய WhatsApp-ல் தொடர்பு கொள்ளுங்கள்:\nhttps://wa.me/" + CONFIG.whatsapp + "\n\nஅல்லது email: " + CONFIG.email,
+    thanks:"நன்றி. வேறு ஏதாவது உதவி வேண்டுமா?",
+    fallback:"Logo, Website, Prices, அல்லது Order பற்றி உதவ முடியும். எது வேண்டும்?"
+  },
+  Tanglish: {
+    hello:"Vanakkam. Naan JARVIS, " + CONFIG.brand + " AI Agent.\n\n24/7 ungalukku help panna ready.\n\nEnna venum? Logo, Website, Prices, illa Order?",
+    logo:"Logo Design.\n\nIdhu anuppunga:\n1. Business peyar\n2. Pidicha colors\n3. Style (modern, classic, minimal)\n\nAppuram \"order\" nu type pannunga.",
+    website:"Website.\n\nSollunga:\n1. Website edhukku\n2. Evlo pages\n3. Pidicha sites\n\nAppuram \"order\" nu type pannunga.",
+    prices:"Prices\n\n• " + CONFIG.prices.logo + "\n• " + CONFIG.prices.website + "\n• " + CONFIG.prices.social + "\n\nFinal price ungal requirement-a poruthu irukkum.",
+    order:"Seri. Order panna WhatsApp-la message pannunga:\nhttps://wa.me/" + CONFIG.whatsapp + "\n\nIllana email: " + CONFIG.email,
+    thanks:"Nandri. Vera edhavadhu help venuma?",
+    fallback:"Logo, Website, Prices, illa Order pathi help panna mudiyum. Edhu venum?"
+  }
+};
+T.Sinhala = T.Hindi = T.Arabic = T.English; // add translations later if needed
+
+/* ================= INTENT ================= */
+function intent(t){
+  const s = t.toLowerCase();
+  if (/(hi|hello|hey|vanakkam|வணக்கம்|hai)\b/.test(s) && s.length < 20) return "hello";
+  if (/(logo|லோகோ)/.test(s)) return "logo";
+  if (/(web|site|வெப்|இணையதளம்)/.test(s)) return "website";
+  if (/(price|cost|rate|how much|vilai|evlo|விலை|எவ்வளவு)/.test(s)) return "prices";
+  if (/(order|buy|start|confirm|ஆர்டர்)/.test(s)) return "order";
+  if (/(thank|thanks|nandri|நன்றி)/.test(s)) return "thanks";
+  return "fallback";
+}
+
+/* ================= CHAT UI ================= */
+const chat = document.getElementById("chat");
+const input = document.getElementById("input");
+const core = document.getElementById("core");
+let lang = "English";
+
+function add(who, text){
+  const d = document.createElement("div");
+  d.className = "msg " + who;
+  const l = document.createElement("div");
+  l.className = "label";
+  l.textContent = who === "user" ? "YOU" : "JARVIS";
+  const b = document.createElement("div");
+  b.textContent = text;
+  d.append(l, b);
+  chat.appendChild(d);
+  chat.scrollTop = chat.scrollHeight;
+  return d;
+}
+
+function reply(text){
+  const typing = add("jarvis", "");
+  typing.lastChild.className = "typing";
+  typing.lastChild.innerHTML = "<span></span><span></span><span></span>";
+  core.classList.add("thinking");
+  setTimeout(() => {
+    typing.remove();
+    core.classList.remove("thinking");
+    add("jarvis", text);
+  }, 600);
+}
+
+function send(){
+  const text = input.value.trim();
+  if (!text) return;
+  input.value = "";
+  add("user", text);
+  const d = detectLang(text);
+  if (d !== "English" || lang === "English") lang = d;
+  document.getElementById("langLabel").textContent = "Detected Language: " + lang;
+  const pack = T[lang] || T.English;
+  reply(pack[intent(text)]);
+}
+
+function quick(text){ input.value = text; send(); }
+
+/* First message */
+add("jarvis", T.English.hello);
+</script>
 </body>
 </html>
