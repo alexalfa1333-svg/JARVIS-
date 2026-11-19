@@ -5,448 +5,344 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>JARVIS - IZAX AI Agent</title>
 <style>
-:root{
-  --bg:#020617; --panel:#0b1226; --line:#1e293b; --text:#f1f5f9; --muted:#94a3b8;
-  --accent:#38bdf8; --accent-ink:#021019; --ok:#22c55e;
-}
+:root{--bg:#020617;--panel:#0b1226;--line:#1e293b;--text:#f1f5f9;--muted:#94a3b8;--accent:#38bdf8;--ink:#021019;--ok:#22c55e}
 *{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',system-ui,-apple-system,'Noto Sans','Noto Sans Tamil','Noto Sans Sinhala',Arial,sans-serif}
 html,body{height:100%}
-body{background:var(--bg);color:var(--text);display:flex;flex-direction:column;align-items:center;
-  padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bottom)}
-
-/* Header */
-.header{text-align:center;padding:18px 20px 6px;width:100%;max-width:680px}
-.orb-wrap{position:relative;width:120px;height:120px;margin:0 auto 12px;display:grid;place-items:center}
-.ring{position:absolute;inset:-12px;border:1px solid #38bdf855;border-top-color:var(--accent);border-radius:50%;animation:spin 14s linear infinite}
-.core{width:92px;height:92px;border-radius:50%;background:var(--accent);display:grid;place-items:center;
-  font-weight:800;font-size:15px;letter-spacing:2.5px;color:var(--accent-ink);
-  box-shadow:0 0 0 8px #38bdf822,0 0 0 18px #38bdf80f,0 0 40px #38bdf8aa}
+body{background:var(--bg);color:var(--text);display:flex;flex-direction:column;align-items:center;padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bottom)}
+.header{text-align:center;padding:14px 20px 4px;width:100%;max-width:680px}
+.orb{position:relative;width:96px;height:96px;margin:0 auto 10px;display:grid;place-items:center}
+.ring{position:absolute;inset:-10px;border:1px solid #38bdf855;border-top-color:var(--accent);border-radius:50%;animation:spin 14s linear infinite}
+.core{width:74px;height:74px;border-radius:50%;background:var(--accent);display:grid;place-items:center;font-weight:800;font-size:12px;letter-spacing:2px;color:var(--ink);box-shadow:0 0 0 6px #38bdf822,0 0 0 14px #38bdf80f,0 0 34px #38bdf8aa}
 .core.thinking{animation:pulse 1s ease-in-out infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
 @keyframes pulse{50%{transform:scale(1.07)}}
 .status{color:var(--ok);font-size:12px;letter-spacing:2px;font-weight:700}
-.subtitle{color:var(--muted);font-size:13px;margin-top:6px;line-height:1.45}
-
-/* Chat */
-.chat{width:100%;max-width:680px;flex:1;min-height:0;padding:12px 18px;overflow-y:auto;
-  display:flex;flex-direction:column;gap:10px;scroll-behavior:smooth}
-.msg{padding:12px 15px;border-radius:16px;max-width:86%;line-height:1.55;font-size:15px;white-space:pre-wrap;word-wrap:break-word}
+.subtitle{color:var(--muted);font-size:12px;margin-top:4px}
+.chat{width:100%;max-width:680px;flex:1;min-height:0;padding:12px 18px;overflow-y:auto;display:flex;flex-direction:column;gap:10px;scroll-behavior:smooth}
+.msg{padding:12px 15px;border-radius:16px;max-width:88%;line-height:1.55;font-size:15px;white-space:pre-wrap;word-wrap:break-word}
 .msg.jarvis{background:var(--panel);border:1px solid var(--line);align-self:flex-start;border-top-left-radius:4px}
-.msg.user{background:var(--accent);color:var(--accent-ink);font-weight:600;align-self:flex-end;border-top-right-radius:4px}
+.msg.user{background:var(--accent);color:var(--ink);font-weight:600;align-self:flex-end;border-top-right-radius:4px}
 .msg a{color:inherit;text-decoration:underline;word-break:break-all}
 .label{font-size:10.5px;letter-spacing:1.5px;font-weight:800;margin-bottom:4px;opacity:.6}
 .typing span{display:inline-block;width:6px;height:6px;margin-right:4px;border-radius:50%;background:var(--muted);animation:blink 1s infinite}
 .typing span:nth-child(2){animation-delay:.2s}.typing span:nth-child(3){animation-delay:.4s}
 @keyframes blink{0%,80%,100%{opacity:.25}40%{opacity:1}}
-
-/* Quick buttons */
-.controls{width:100%;max-width:680px;padding:8px 18px;display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
-.btn{background:var(--panel);border:1px solid var(--line);color:var(--text);padding:9px 14px;border-radius:999px;
-  font-size:13px;cursor:pointer;transition:.15s}
-.btn:hover,.btn:focus-visible{background:var(--accent);color:var(--accent-ink);outline:none}
-
-/* Language row */
+.card{align-self:flex-start;width:min(88%,340px);background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:12px}
+.card svg,.card img{width:100%;height:auto;border-radius:12px;display:block;background:#fff}
+.card .note{font-size:12px;color:var(--muted);margin:8px 0 2px}
+.row{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.controls{width:100%;max-width:680px;padding:6px 18px;display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+.btn{background:var(--panel);border:1px solid var(--line);color:var(--text);padding:8px 13px;border-radius:999px;font-size:13px;cursor:pointer;transition:.15s}
+.btn:hover,.btn:focus-visible{background:var(--accent);color:var(--ink);outline:none}
 .lang{display:flex;align-items:center;justify-content:center;gap:8px;font-size:12px;color:var(--muted);padding:2px 18px 6px}
 select{background:var(--panel);color:var(--text);border:1px solid var(--line);border-radius:999px;padding:6px 10px;font-size:12px;outline:none;max-width:60%}
-select:focus{border-color:var(--accent)}
-
-/* Input */
-.input-area{width:100%;max-width:680px;padding:6px 18px 18px;display:flex;gap:10px}
-input{flex:1;min-width:0;background:var(--panel);border:1px solid var(--line);color:var(--text);padding:14px 16px;
-  border-radius:999px;outline:none;font-size:16px}
+.input-area{width:100%;max-width:680px;padding:6px 18px 16px;display:flex;gap:10px}
+input{flex:1;min-width:0;background:var(--panel);border:1px solid var(--line);color:var(--text);padding:14px 16px;border-radius:999px;outline:none;font-size:16px}
 input:focus{border-color:var(--accent)}
-.send{background:var(--accent);color:var(--accent-ink);border:none;padding:0 22px;border-radius:999px;font-weight:800;cursor:pointer}
-.send:focus-visible{outline:2px solid #fff}
-
+.send{background:var(--accent);color:var(--ink);border:none;padding:0 22px;border-radius:999px;font-weight:800;cursor:pointer}
 @media (prefers-reduced-motion:reduce){.ring,.core.thinking,.typing span{animation:none}}
 </style>
 </head>
 <body>
 
 <div class="header">
-  <div class="orb-wrap">
-    <div class="ring"></div>
-    <div class="core" id="core">JARVIS</div>
-  </div>
+  <div class="orb"><div class="ring"></div><div class="core" id="core">JARVIS</div></div>
   <div class="status">JARVIS AGENT - ONLINE</div>
-  <div class="subtitle">IZAX Personal AI Agent. English by default. Auto-detects client language.</div>
+  <div class="subtitle">IZAX AI Agent: chat + instant logo creation. Auto-detects language.</div>
 </div>
 
 <div class="chat" id="chat" aria-live="polite"></div>
-
 <div class="controls" id="controls"></div>
-
-<div class="lang">
-  <span>Language:</span>
-  <select id="langSel" onchange="manualLang(this.value)"></select>
-</div>
-
+<div class="lang"><span>Language:</span><select id="langSel" onchange="manualLang(this.value)"></select></div>
 <div class="input-area">
-  <input id="input" dir="auto" placeholder="Type a message to JARVIS..." autocomplete="off"
-         onkeydown="if(event.key==='Enter') send()" />
+  <input id="input" dir="auto" placeholder="Type a message to JARVIS..." autocomplete="off" onkeydown="if(event.key==='Enter')send()">
   <button class="send" onclick="send()">SEND</button>
 </div>
 
 <script>
-/* ================= SETTINGS (edit these) ================= */
+/* ============ SETTINGS (edit these) ============ */
 const CONFIG = {
   brand: "IZAX",
-  whatsapp: "94XXXXXXXXX",          // WhatsApp number with country code, no +
+  whatsapp: "94XXXXXXXXX",        // country code, no +
   email: "yourmail@example.com",
-  prices: {
-    logo:    "Logo Design: from 15 USD",
-    website: "Website: from 60 USD",
-    social:  "Social media post pack: from 10 USD"
-  }
+  prices: ["Logo Design: from 15 USD", "Website: from 60 USD", "Social media post pack: from 10 USD"]
 };
 
-/* ================= LANGUAGE PACKS =================
-   lb = button labels | price = [header, footer]
-   Placeholders: {brand} {wa} {mail}                       */
+/* ============ LANGUAGE PACKS ============
+   Add a new language by copying one block.
+   {b}=brand {n}=client business name {wa}=whatsapp {m}=email */
 const LANG = {
 en:{n:"English",lb:["Logo Design","Website","Prices","Place Order"],
- hello:"Hello. I am JARVIS, the {brand} AI Agent.\n\nI am online and ready to help you 24/7.\n\nWhat do you need? Logo Design, Website, Prices, or Place an Order?",
- logo:"Logo Design.\n\nPlease send me:\n1. Business name\n2. Preferred colors\n3. Style (modern, classic, minimal)\n\nThen type \"order\" to confirm.",
- web:"Website.\n\nPlease tell me:\n1. What the website is for\n2. How many pages you need\n3. Any sites you like\n\nThen type \"order\" to confirm.",
+ hello:"Hello. I am JARVIS, the {b} AI Agent.\n\nI can chat, and I can also CREATE your logo right here, right now.\n\nTell me your business name and what you feel about it, or tap Logo Design.",
+ ask:"I would love to create your logo.\n\nTell me:\n1. Your business name\n2. What it means to you (love, dream, strength, nature, joy...)\n3. Colors or style if you like (modern, classic, minimal)",
+ emo:"I can feel how much \"{n}\" means to you. I put that feeling into this design. I hope it carries your dream forward.",
+ note:"Your logo for {n}",dl:"Download PNG",sv:"Download SVG",ai:"AI Art version",od:"Order this",
+ wait:"Creating AI art... this can take 10-20 seconds.",fail:"The AI art server is busy. Please try again in a moment.",
+ web:"Website.\n\nTell me:\n1. What the website is for\n2. How many pages\n3. Sites you like\n\nThen type \"order\".",
  price:["Prices","Final price depends on your requirements."],
- order:"Great. To place your order, message us on WhatsApp:\n{wa}\n\nor email: {mail}\n\nPlease include your name, service, and deadline.",
+ order:"Great. To place your order, message us on WhatsApp:\n{wa}\n\nor email: {m}\n\nInclude your name, service and deadline.",
  thanks:"You are welcome. Anything else I can help with?",
- fb:"I can help with Logo Design, Website, Prices, or placing an Order. Which one do you need?"},
+ fb:"I can create a Logo for you, help with a Website, share Prices, or take an Order. What do you need?"},
 
 ta:{n:"தமிழ் (Tamil)",lb:["லோகோ","வெப்சைட்","விலை","ஆர்டர்"],
- hello:"வணக்கம். நான் JARVIS, {brand} AI Agent.\n\nநான் 24/7 உங்களுக்கு உதவ தயாராக இருக்கிறேன்.\n\nஉங்களுக்கு என்ன வேண்டும்? Logo, Website, விலை, அல்லது Order?",
- logo:"Logo Design.\n\nதயவுசெய்து அனுப்புங்கள்:\n1. Business பெயர்\n2. விருப்பமான நிறங்கள்\n3. Style (modern, classic, minimal)\n\nபிறகு உறுதிசெய்ய \"order\" என டைப் செய்யுங்கள்.",
- web:"Website.\n\nதயவுசெய்து சொல்லுங்கள்:\n1. Website எதற்காக\n2. எத்தனை pages வேண்டும்\n3. பிடித்த sites\n\nபிறகு உறுதிசெய்ய \"order\" என டைப் செய்யுங்கள்.",
+ hello:"வணக்கம். நான் JARVIS, {b} AI Agent.\n\nநான் பேசவும் முடியும், உங்கள் லோகோவை இங்கேயே உருவாக்கவும் முடியும்.\n\nஉங்கள் Business பெயர், அதைப் பற்றிய உங்கள் உணர்வை சொல்லுங்கள்.",
+ ask:"உங்கள் லோகோவை உருவாக்க ஆசை.\n\nசொல்லுங்கள்:\n1. Business பெயர்\n2. அது உங்களுக்கு என்ன அர்த்தம் (அன்பு, கனவு, பலம், இயற்கை, மகிழ்ச்சி...)\n3. விருப்பமான நிறம் / style",
+ emo:"\"{n}\" உங்களுக்கு எவ்வளவு முக்கியம் என்பதை உணர்கிறேன். அந்த உணர்வை இந்த டிசைனில் வைத்துள்ளேன். உங்கள் கனவு வெற்றி பெறட்டும்.",
+ note:"{n} க்கான லோகோ",dl:"PNG பதிவிறக்கு",sv:"SVG பதிவிறக்கு",ai:"AI Art பதிப்பு",od:"ஆர்டர் செய்",
+ wait:"AI படம் உருவாகிறது... 10-20 விநாடிகள் ஆகலாம்.",fail:"AI server பிஸி. சிறிது நேரம் கழித்து முயற்சிக்கவும்.",
+ web:"Website.\n\nசொல்லுங்கள்:\n1. எதற்காக\n2. எத்தனை pages\n3. பிடித்த sites\n\nபிறகு \"order\" என டைப் செய்யுங்கள்.",
  price:["விலை விவரம்","இறுதி விலை உங்கள் தேவையைப் பொறுத்தது."],
- order:"சரி. Order செய்ய WhatsApp-ல் தொடர்பு கொள்ளுங்கள்:\n{wa}\n\nஅல்லது email: {mail}\n\nஉங்கள் பெயர், சேவை, deadline குறிப்பிடுங்கள்.",
+ order:"சரி. Order செய்ய WhatsApp-ல் தொடர்பு கொள்ளுங்கள்:\n{wa}\n\nஅல்லது email: {m}\n\nபெயர், சேவை, deadline குறிப்பிடுங்கள்.",
  thanks:"நன்றி. வேறு ஏதாவது உதவி வேண்டுமா?",
- fb:"Logo, Website, விலை அல்லது Order பற்றி உதவ முடியும். எது வேண்டும்?"},
+ fb:"Logo உருவாக்க, Website, விலை, Order பற்றி உதவ முடியும். எது வேண்டும்?"},
 
 tg:{n:"Tanglish",lb:["Logo Design","Website","Vilai","Order"],
- hello:"Vanakkam. Naan JARVIS, {brand} AI Agent.\n\n24/7 ungalukku help panna ready.\n\nEnna venum? Logo, Website, Vilai, illa Order?",
- logo:"Logo Design.\n\nIdhu anuppunga:\n1. Business peyar\n2. Pidicha colors\n3. Style (modern, classic, minimal)\n\nAppuram \"order\" nu type pannunga.",
- web:"Website.\n\nSollunga:\n1. Website edhukku\n2. Evlo pages venum\n3. Pidicha sites\n\nAppuram \"order\" nu type pannunga.",
+ hello:"Vanakkam. Naan JARVIS, {b} AI Agent.\n\nNaan pesavum mudiyum, ungal logo-vaiyum inge ippavae create panna mudiyum.\n\nUngal business peyar, adhu pathi ungal feeling sollunga.",
+ ask:"Ungal logo create panna aasai.\n\nSollunga:\n1. Business peyar\n2. Adhu ungalukku enna meaning (love, dream, strength, nature, joy...)\n3. Pidicha color / style",
+ emo:"\"{n}\" ungalukku evlo mukkiyam nu unarndhen. Andha feeling-a indha design-la vechiruken. Ungal kanavu jeyikkatum.",
+ note:"{n} logo",dl:"PNG download",sv:"SVG download",ai:"AI Art version",od:"Order pannu",
+ wait:"AI art create aagudhu... 10-20 sec aagum.",fail:"AI server busy. Konjam neram kazhichu try pannunga.",
+ web:"Website.\n\nSollunga:\n1. Edhukku\n2. Evlo pages\n3. Pidicha sites\n\nAppuram \"order\" nu type pannunga.",
  price:["Vilai vivaram","Final vilai ungal requirement-a poruthu irukkum."],
- order:"Seri. Order panna WhatsApp-la message pannunga:\n{wa}\n\nIllana email: {mail}\n\nUngal peyar, service, deadline sollunga.",
+ order:"Seri. Order panna WhatsApp-la message pannunga:\n{wa}\n\nIllana email: {m}\n\nPeyar, service, deadline sollunga.",
  thanks:"Nandri. Vera edhavadhu help venuma?",
- fb:"Logo, Website, Vilai, illa Order pathi help panna mudiyum. Edhu venum?"},
+ fb:"Logo create panna, Website, Vilai, Order pathi help panna mudiyum. Edhu venum?"},
 
 si:{n:"සිංහල (Sinhala)",lb:["ලාංඡන","වෙබ් අඩවිය","මිල ගණන්","ඇණවුම"],
- hello:"ආයුබෝවන්. මම JARVIS, {brand} AI ඒජන්ට්.\n\nමම 24/7 ඔබට උදව් කිරීමට සූදානම්.\n\nඔබට අවශ්‍ය මොකක්ද? ලාංඡන නිර්මාණය, වෙබ් අඩවිය, මිල ගණන්, හෝ ඇණවුමක්?",
- logo:"ලාංඡන නිර්මාණය.\n\nකරුණාකර එවන්න:\n1. ව්‍යාපාරයේ නම\n2. කැමති වර්ණ\n3. ශෛලිය (නවීන, සම්භාව්‍ය, සරල)\n\nඉන්පසු තහවුරු කිරීමට \"order\" ටයිප් කරන්න.",
- web:"වෙබ් අඩවිය.\n\nකරුණාකර කියන්න:\n1. වෙබ් අඩවිය කුමක් සඳහාද\n2. පිටු කීයක් අවශ්‍යද\n3. කැමති වෙබ් අඩවි\n\nඉන්පසු තහවුරු කිරීමට \"order\" ටයිප් කරන්න.",
+ hello:"ආයුබෝවන්. මම JARVIS, {b} AI ඒජන්ට්.\n\nමට කතා කළ හැක, ඔබේ ලාංඡනය මෙතනම නිර්මාණය කළ හැක.\n\nඔබේ ව්‍යාපාරයේ නම සහ ඒ ගැන ඔබේ හැඟීම කියන්න.",
+ ask:"ඔබේ ලාංඡනය නිර්මාණය කිරීමට කැමතියි.\n\nකියන්න:\n1. ව්‍යාපාරයේ නම\n2. ඒකෙන් ඔබට අදහස් වන දේ (ආදරය, සිහිනය, ශක්තිය, ස්වභාවය, සතුට...)\n3. කැමති වර්ණ / ශෛලිය",
+ emo:"\"{n}\" ඔබට කොච්චර වටිනවාද කියා මට දැනෙනවා. ඒ හැඟීම මේ නිර්මාණයට දැම්මා. ඔබේ සිහිනය ජයග්‍රහණය කරාවා.",
+ note:"{n} සඳහා ලාංඡනය",dl:"PNG බාගන්න",sv:"SVG බාගන්න",ai:"AI Art අනුවාදය",od:"ඇණවුම් කරන්න",
+ wait:"AI රූපය සාදමින්... තත්පර 10-20ක් ගත විය හැක.",fail:"AI සේවාදායකය කාර්යබහුලයි. මද වේලාවකින් නැවත උත්සාහ කරන්න.",
+ web:"වෙබ් අඩවිය.\n\nකියන්න:\n1. කුමක් සඳහාද\n2. පිටු කීයද\n3. කැමති අඩවි\n\nඉන්පසු \"order\" ටයිප් කරන්න.",
  price:["මිල ගණන්","අවසන් මිල ඔබේ අවශ්‍යතා මත රඳා පවතී."],
- order:"හරි. ඇණවුම් කිරීමට WhatsApp හරහා අපට පණිවිඩයක් එවන්න:\n{wa}\n\nහෝ email: {mail}\n\nඔබගේ නම, සේවාව සහ අවසාන දිනය සඳහන් කරන්න.",
+ order:"හරි. ඇණවුම් කිරීමට WhatsApp හරහා පණිවිඩයක් එවන්න:\n{wa}\n\nහෝ email: {m}\n\nනම, සේවාව, අවසාන දිනය සඳහන් කරන්න.",
  thanks:"ස්තුතියි. තවත් උදව්වක් අවශ්‍යද?",
- fb:"ලාංඡන, වෙබ් අඩවි, මිල ගණන් හෝ ඇණවුම් ගැන මට උදව් කළ හැක. ඔබට අවශ්‍ය මොකක්ද?"},
+ fb:"ලාංඡන නිර්මාණය, වෙබ්, මිල හෝ ඇණවුම් ගැන උදව් කළ හැක. මොකක්ද අවශ්‍ය?"},
 
 hi:{n:"हिन्दी (Hindi)",lb:["लोगो","वेबसाइट","कीमतें","ऑर्डर"],
- hello:"नमस्ते। मैं JARVIS हूँ, {brand} AI एजेंट।\n\nमैं 24/7 आपकी मदद के लिए ऑनलाइन हूँ।\n\nआपको क्या चाहिए? लोगो डिज़ाइन, वेबसाइट, कीमतें, या ऑर्डर?",
- logo:"लोगो डिज़ाइन।\n\nकृपया भेजें:\n1. बिज़नेस का नाम\n2. पसंदीदा रंग\n3. स्टाइल (मॉडर्न, क्लासिक, मिनिमल)\n\nफिर पक्का करने के लिए \"order\" लिखें।",
- web:"वेबसाइट।\n\nकृपया बताएं:\n1. वेबसाइट किसलिए चाहिए\n2. कितने पेज चाहिए\n3. कोई पसंदीदा साइट\n\nफिर पक्का करने के लिए \"order\" लिखें।",
+ hello:"नमस्ते। मैं JARVIS हूँ, {b} AI एजेंट।\n\nमैं बात भी कर सकता हूँ और आपका लोगो यहीं बना भी सकता हूँ।\n\nअपने बिज़नेस का नाम और उससे जुड़ी अपनी भावना बताइए।",
+ ask:"मैं आपका लोगो बनाना चाहता हूँ।\n\nबताइए:\n1. बिज़नेस का नाम\n2. यह आपके लिए क्या मायने रखता है (प्यार, सपना, ताकत, प्रकृति, खुशी...)\n3. पसंदीदा रंग / स्टाइल",
+ emo:"मैं समझ सकता हूँ कि \"{n}\" आपके लिए कितना खास है। वही भावना इस डिज़ाइन में डाली है। आपका सपना पूरा हो।",
+ note:"{n} का लोगो",dl:"PNG डाउनलोड",sv:"SVG डाउनलोड",ai:"AI Art वर्शन",od:"ऑर्डर करें",
+ wait:"AI आर्ट बन रहा है... 10-20 सेकंड लग सकते हैं।",fail:"AI सर्वर व्यस्त है। थोड़ी देर बाद कोशिश करें।",
+ web:"वेबसाइट।\n\nबताइए:\n1. किसलिए\n2. कितने पेज\n3. पसंदीदा साइट\n\nफिर \"order\" लिखें।",
  price:["कीमतें","अंतिम कीमत आपकी ज़रूरतों पर निर्भर करती है।"],
- order:"ठीक है। ऑर्डर देने के लिए हमें WhatsApp पर संदेश भेजें:\n{wa}\n\nया ईमेल करें: {mail}\n\nकृपया अपना नाम, सेवा और डेडलाइन लिखें।",
- thanks:"धन्यवाद। क्या और कोई मदद चाहिए?",
- fb:"मैं लोगो, वेबसाइट, कीमतों या ऑर्डर में मदद कर सकता हूँ। आपको क्या चाहिए?"},
-
-ar:{n:"العربية (Arabic)",lb:["تصميم شعار","موقع إلكتروني","الأسعار","تقديم طلب"],
- hello:"مرحباً. أنا JARVIS، وكيل {brand} للذكاء الاصطناعي.\n\nأنا متصل وجاهز لمساعدتك على مدار الساعة.\n\nماذا تحتاج؟ تصميم شعار، موقع إلكتروني، الأسعار، أم تقديم طلب؟",
- logo:"تصميم الشعار.\n\nمن فضلك أرسل لي:\n1. اسم النشاط التجاري\n2. الألوان المفضلة\n3. النمط (عصري، كلاسيكي، بسيط)\n\nثم اكتب \"order\" للتأكيد.",
- web:"الموقع الإلكتروني.\n\nمن فضلك أخبرني:\n1. الغرض من الموقع\n2. عدد الصفحات المطلوبة\n3. أي مواقع تعجبك\n\nثم اكتب \"order\" للتأكيد.",
- price:["الأسعار","السعر النهائي يعتمد على متطلباتك."],
- order:"ممتاز. لتقديم طلبك راسلنا على واتساب:\n{wa}\n\nأو عبر البريد: {mail}\n\nيرجى ذكر اسمك والخدمة والموعد النهائي.",
- thanks:"على الرحب والسعة. هل تحتاج إلى مساعدة أخرى؟",
- fb:"يمكنني مساعدتك في تصميم الشعار أو الموقع أو الأسعار أو تقديم طلب. ماذا تحتاج؟"},
-
-ur:{n:"اردو (Urdu)",lb:["لوگو","ویب سائٹ","قیمتیں","آرڈر"],
- hello:"السلام علیکم۔ میں JARVIS ہوں، {brand} AI ایجنٹ۔\n\nمیں 24/7 آپ کی مدد کے لیے آن لائن ہوں۔\n\nآپ کو کیا چاہیے؟ لوگو ڈیزائن، ویب سائٹ، قیمتیں، یا آرڈر؟",
- logo:"لوگو ڈیزائن۔\n\nبراہ کرم بھیجیں:\n1. کاروبار کا نام\n2. پسندیدہ رنگ\n3. انداز (جدید، کلاسک، سادہ)\n\nپھر تصدیق کے لیے \"order\" لکھیں۔",
- web:"ویب سائٹ۔\n\nبراہ کرم بتائیں:\n1. ویب سائٹ کس لیے چاہیے\n2. کتنے صفحات چاہییں\n3. کوئی پسندیدہ سائٹ\n\nپھر تصدیق کے لیے \"order\" لکھیں۔",
- price:["قیمتیں","حتمی قیمت آپ کی ضروریات پر منحصر ہے۔"],
- order:"ٹھیک ہے۔ آرڈر دینے کے لیے ہمیں WhatsApp پر پیغام بھیجیں:\n{wa}\n\nیا ای میل کریں: {mail}\n\nبراہ کرم اپنا نام، سروس اور آخری تاریخ لکھیں۔",
- thanks:"شکریہ۔ کیا کوئی اور مدد چاہیے؟",
- fb:"میں لوگو، ویب سائٹ، قیمتوں یا آرڈر میں مدد کر سکتا ہوں۔ آپ کو کیا چاہیے؟"},
-
-bn:{n:"বাংলা (Bengali)",lb:["লোগো","ওয়েবসাইট","দাম","অর্ডার"],
- hello:"নমস্কার। আমি JARVIS, {brand} AI এজেন্ট।\n\nআমি ২৪/৭ আপনাকে সাহায্য করতে অনলাইনে আছি।\n\nআপনার কী প্রয়োজন? লোগো ডিজাইন, ওয়েবসাইট, দাম, নাকি অর্ডার?",
- logo:"লোগো ডিজাইন।\n\nঅনুগ্রহ করে পাঠান:\n1. ব্যবসার নাম\n2. পছন্দের রং\n3. স্টাইল (আধুনিক, ক্লাসিক, মিনিমাল)\n\nতারপর নিশ্চিত করতে \"order\" লিখুন।",
- web:"ওয়েবসাইট।\n\nঅনুগ্রহ করে জানান:\n1. ওয়েবসাইটটি কীসের জন্য\n2. কতগুলো পেজ লাগবে\n3. পছন্দের কোনো সাইট\n\nতারপর নিশ্চিত করতে \"order\" লিখুন।",
- price:["দাম","চূড়ান্ত দাম আপনার প্রয়োজনের উপর নির্ভর করে।"],
- order:"ঠিক আছে। অর্ডার করতে WhatsApp-এ আমাদের মেসেজ করুন:\n{wa}\n\nঅথবা ইমেইল: {mail}\n\nআপনার নাম, সার্ভিস ও ডেডলাইন লিখুন।",
- thanks:"ধন্যবাদ। আর কিছু সাহায্য লাগবে?",
- fb:"আমি লোগো, ওয়েবসাইট, দাম বা অর্ডারে সাহায্য করতে পারি। আপনার কী প্রয়োজন?"},
-
-te:{n:"తెలుగు (Telugu)",lb:["లోగో","వెబ్‌సైట్","ధరలు","ఆర్డర్"],
- hello:"నమస్కారం. నేను JARVIS, {brand} AI ఏజెంట్‌ని.\n\nనేను 24/7 మీకు సహాయం చేయడానికి ఆన్‌లైన్‌లో ఉన్నాను.\n\nమీకు ఏమి కావాలి? లోగో డిజైన్, వెబ్‌సైట్, ధరలు, లేదా ఆర్డర్?",
- logo:"లోగో డిజైన్.\n\nదయచేసి పంపండి:\n1. వ్యాపార పేరు\n2. ఇష్టమైన రంగులు\n3. స్టైల్ (మోడరన్, క్లాసిక్, మినిమల్)\n\nఆ తర్వాత నిర్ధారించడానికి \"order\" అని టైప్ చేయండి.",
- web:"వెబ్‌సైట్.\n\nదయచేసి చెప్పండి:\n1. వెబ్‌సైట్ దేనికి\n2. ఎన్ని పేజీలు కావాలి\n3. మీకు నచ్చిన సైట్లు\n\nఆ తర్వాత నిర్ధారించడానికి \"order\" అని టైప్ చేయండి.",
- price:["ధరలు","తుది ధర మీ అవసరాలపై ఆధారపడి ఉంటుంది."],
- order:"సరే. ఆర్డర్ చేయడానికి WhatsAppలో మాకు మెసేజ్ చేయండి:\n{wa}\n\nలేదా ఈమెయిల్: {mail}\n\nమీ పేరు, సర్వీస్, డెడ్‌లైన్ రాయండి.",
- thanks:"ధన్యవాదాలు. ఇంకేమైనా సహాయం కావాలా?",
- fb:"నేను లోగో, వెబ్‌సైట్, ధరలు లేదా ఆర్డర్‌లో సహాయం చేయగలను. మీకు ఏమి కావాలి?"},
-
-ml:{n:"മലയാളം (Malayalam)",lb:["ലോഗോ","വെബ്സൈറ്റ്","വില","ഓർഡർ"],
- hello:"നമസ്കാരം. ഞാൻ JARVIS, {brand} AI ഏജന്റ്.\n\nഞാൻ 24/7 നിങ്ങളെ സഹായിക്കാൻ ഓൺലൈനിൽ ഉണ്ട്.\n\nനിങ്ങൾക്ക് എന്താണ് വേണ്ടത്? ലോഗോ ഡിസൈൻ, വെബ്സൈറ്റ്, വില, അല്ലെങ്കിൽ ഓർഡർ?",
- logo:"ലോഗോ ഡിസൈൻ.\n\nദയവായി അയയ്ക്കുക:\n1. ബിസിനസ് പേര്\n2. ഇഷ്ടമുള്ള നിറങ്ങൾ\n3. സ്റ്റൈൽ (മോഡേൺ, ക്ലാസിക്, മിനിമൽ)\n\nഉറപ്പിക്കാൻ \"order\" എന്ന് ടൈപ്പ് ചെയ്യുക.",
- web:"വെബ്സൈറ്റ്.\n\nദയവായി പറയുക:\n1. വെബ്സൈറ്റ് എന്തിനാണ്\n2. എത്ര പേജുകൾ വേണം\n3. ഇഷ്ടമുള്ള സൈറ്റുകൾ\n\nഉറപ്പിക്കാൻ \"order\" എന്ന് ടൈപ്പ് ചെയ്യുക.",
- price:["വില വിവരങ്ങൾ","അന്തിമ വില നിങ്ങളുടെ ആവശ്യങ്ങളെ ആശ്രയിച്ചിരിക്കും."],
- order:"ശരി. ഓർഡർ ചെയ്യാൻ WhatsApp-ൽ ഞങ്ങൾക്ക് സന്ദേശം അയയ്ക്കുക:\n{wa}\n\nഅല്ലെങ്കിൽ ഇമെയിൽ: {mail}\n\nനിങ്ങളുടെ പേര്, സർവീസ്, ഡെഡ്‌ലൈൻ എന്നിവ ചേർക്കുക.",
- thanks:"നന്ദി. മറ്റെന്തെങ്കിലും സഹായം വേണോ?",
- fb:"ലോഗോ, വെബ്സൈറ്റ്, വില, ഓർഡർ എന്നിവയിൽ എനിക്ക് സഹായിക്കാം. നിങ്ങൾക്ക് എന്താണ് വേണ്ടത്?"},
-
-es:{n:"Español (Spanish)",lb:["Diseño de logo","Sitio web","Precios","Hacer pedido"],
- hello:"Hola. Soy JARVIS, el agente de IA de {brand}.\n\nEstoy en línea y listo para ayudarte 24/7.\n\n¿Qué necesitas? ¿Diseño de logo, sitio web, precios o hacer un pedido?",
- logo:"Diseño de logo.\n\nPor favor envíame:\n1. Nombre del negocio\n2. Colores preferidos\n3. Estilo (moderno, clásico, minimalista)\n\nLuego escribe \"order\" para confirmar.",
- web:"Sitio web.\n\nPor favor cuéntame:\n1. Para qué es el sitio\n2. Cuántas páginas necesitas\n3. Sitios que te gusten\n\nLuego escribe \"order\" para confirmar.",
- price:["Precios","El precio final depende de tus requisitos."],
- order:"Perfecto. Para hacer tu pedido escríbenos por WhatsApp:\n{wa}\n\no por correo: {mail}\n\nIncluye tu nombre, el servicio y la fecha límite.",
- thanks:"De nada. ¿Puedo ayudarte con algo más?",
- fb:"Puedo ayudarte con diseño de logo, sitio web, precios o pedidos. ¿Qué necesitas?"},
-
-fr:{n:"Français (French)",lb:["Création de logo","Site web","Tarifs","Commander"],
- hello:"Bonjour. Je suis JARVIS, l'agent IA de {brand}.\n\nJe suis en ligne et prêt à vous aider 24h/24, 7j/7.\n\nDe quoi avez-vous besoin ? Création de logo, site web, tarifs ou passer commande ?",
- logo:"Création de logo.\n\nMerci de m'envoyer :\n1. Nom de l'entreprise\n2. Couleurs préférées\n3. Style (moderne, classique, minimaliste)\n\nPuis tapez \"order\" pour confirmer.",
- web:"Site web.\n\nMerci de m'indiquer :\n1. L'objectif du site\n2. Le nombre de pages\n3. Des sites que vous aimez\n\nPuis tapez \"order\" pour confirmer.",
- price:["Tarifs","Le prix final dépend de vos besoins."],
- order:"Parfait. Pour passer commande, écrivez-nous sur WhatsApp :\n{wa}\n\nou par e-mail : {mail}\n\nIndiquez votre nom, le service et la date limite.",
- thanks:"Avec plaisir. Puis-je vous aider avec autre chose ?",
- fb:"Je peux vous aider pour un logo, un site web, les tarifs ou une commande. De quoi avez-vous besoin ?"},
-
-de:{n:"Deutsch (German)",lb:["Logo-Design","Website","Preise","Bestellen"],
- hello:"Hallo. Ich bin JARVIS, der KI-Agent von {brand}.\n\nIch bin online und helfe Ihnen rund um die Uhr.\n\nWas brauchen Sie? Logo-Design, Website, Preise oder eine Bestellung?",
- logo:"Logo-Design.\n\nBitte senden Sie mir:\n1. Firmenname\n2. Bevorzugte Farben\n3. Stil (modern, klassisch, minimalistisch)\n\nSchreiben Sie dann \"order\" zur Bestätigung.",
- web:"Website.\n\nBitte teilen Sie mir mit:\n1. Wofür die Website ist\n2. Wie viele Seiten Sie brauchen\n3. Seiten, die Ihnen gefallen\n\nSchreiben Sie dann \"order\" zur Bestätigung.",
- price:["Preise","Der Endpreis hängt von Ihren Anforderungen ab."],
- order:"Gut. Für Ihre Bestellung schreiben Sie uns auf WhatsApp:\n{wa}\n\noder per E-Mail: {mail}\n\nBitte nennen Sie Ihren Namen, die Leistung und die Frist.",
- thanks:"Gern geschehen. Kann ich sonst noch helfen?",
- fb:"Ich helfe Ihnen bei Logo-Design, Website, Preisen oder Bestellungen. Was brauchen Sie?"},
-
-pt:{n:"Português (Portuguese)",lb:["Design de logo","Site","Preços","Fazer pedido"],
- hello:"Olá. Eu sou o JARVIS, o agente de IA da {brand}.\n\nEstou online e pronto para ajudar você 24/7.\n\nDo que você precisa? Design de logo, site, preços ou fazer um pedido?",
- logo:"Design de logo.\n\nPor favor, envie:\n1. Nome do negócio\n2. Cores preferidas\n3. Estilo (moderno, clássico, minimalista)\n\nDepois digite \"order\" para confirmar.",
- web:"Site.\n\nPor favor, me conte:\n1. Para que serve o site\n2. Quantas páginas você precisa\n3. Sites que você gosta\n\nDepois digite \"order\" para confirmar.",
- price:["Preços","O preço final depende das suas necessidades."],
- order:"Ótimo. Para fazer seu pedido, mande mensagem no WhatsApp:\n{wa}\n\nou por e-mail: {mail}\n\nInforme seu nome, o serviço e o prazo.",
- thanks:"De nada. Posso ajudar em mais alguma coisa?",
- fb:"Posso ajudar com design de logo, site, preços ou pedidos. Do que você precisa?"},
-
-ru:{n:"Русский (Russian)",lb:["Логотип","Сайт","Цены","Заказ"],
- hello:"Здравствуйте. Я JARVIS, ИИ-агент {brand}.\n\nЯ онлайн и готов помогать вам 24/7.\n\nЧто вам нужно? Дизайн логотипа, сайт, цены или оформить заказ?",
- logo:"Дизайн логотипа.\n\nПожалуйста, отправьте:\n1. Название бизнеса\n2. Предпочитаемые цвета\n3. Стиль (современный, классический, минимализм)\n\nЗатем напишите \"order\" для подтверждения.",
- web:"Сайт.\n\nПожалуйста, расскажите:\n1. Для чего нужен сайт\n2. Сколько страниц нужно\n3. Какие сайты вам нравятся\n\nЗатем напишите \"order\" для подтверждения.",
- price:["Цены","Окончательная цена зависит от ваших требований."],
- order:"Отлично. Чтобы оформить заказ, напишите нам в WhatsApp:\n{wa}\n\nили на почту: {mail}\n\nУкажите ваше имя, услугу и срок.",
- thanks:"Пожалуйста. Могу ли я помочь чем-то ещё?",
- fb:"Я могу помочь с логотипом, сайтом, ценами или заказом. Что вам нужно?"},
-
-zh:{n:"中文 (Chinese)",lb:["标志设计","网站","价格","下订单"],
- hello:"您好。我是 JARVIS，{brand} 的 AI 助手。\n\n我在线，全天候为您服务。\n\n您需要什么？标志设计、网站、价格，还是下订单？",
- logo:"标志设计。\n\n请发送：\n1. 公司名称\n2. 喜欢的颜色\n3. 风格（现代、经典、极简）\n\n然后输入 \"order\" 确认。",
- web:"网站。\n\n请告诉我：\n1. 网站的用途\n2. 需要几个页面\n3. 您喜欢的网站\n\n然后输入 \"order\" 确认。",
- price:["价格","最终价格取决于您的具体需求。"],
- order:"好的。请通过 WhatsApp 联系我们下单：\n{wa}\n\n或发送邮件至：{mail}\n\n请注明您的姓名、服务项目和截止日期。",
- thanks:"不客气。还有其他需要帮忙的吗？",
- fb:"我可以帮您处理标志设计、网站、价格或订单。您需要什么？"},
-
-ja:{n:"日本語 (Japanese)",lb:["ロゴ","ウェブサイト","料金","注文"],
- hello:"こんにちは。{brand} AIエージェントのJARVISです。\n\n24時間いつでもお手伝いできます。\n\n何をお探しですか？ロゴデザイン、ウェブサイト、料金、またはご注文？",
- logo:"ロゴデザイン。\n\n以下をお送りください：\n1. 事業名\n2. 好みの色\n3. スタイル（モダン、クラシック、ミニマル）\n\nその後 \"order\" と入力して確定してください。",
- web:"ウェブサイト。\n\n以下を教えてください：\n1. サイトの目的\n2. 必要なページ数\n3. 好きなサイト\n\nその後 \"order\" と入力して確定してください。",
- price:["料金","最終料金はご要望によって変わります。"],
- order:"承知しました。ご注文はWhatsAppでご連絡ください：\n{wa}\n\nまたはメール：{mail}\n\nお名前、サービス、納期をお知らせください。",
- thanks:"どういたしまして。他にお手伝いできることはありますか？",
- fb:"ロゴデザイン、ウェブサイト、料金、ご注文についてお手伝いできます。何をお探しですか？"},
-
-ko:{n:"한국어 (Korean)",lb:["로고","웹사이트","가격","주문"],
- hello:"안녕하세요. 저는 {brand} AI 에이전트 JARVIS입니다.\n\n24시간 도와드릴 준비가 되어 있습니다.\n\n무엇이 필요하세요? 로고 디자인, 웹사이트, 가격, 또는 주문?",
- logo:"로고 디자인.\n\n다음을 보내주세요:\n1. 사업체 이름\n2. 선호하는 색상\n3. 스타일 (모던, 클래식, 미니멀)\n\n그 후 확정하려면 \"order\"를 입력하세요.",
- web:"웹사이트.\n\n다음을 알려주세요:\n1. 웹사이트의 용도\n2. 필요한 페이지 수\n3. 마음에 드는 사이트\n\n그 후 확정하려면 \"order\"를 입력하세요.",
- price:["가격","최종 가격은 요구 사항에 따라 달라집니다."],
- order:"좋습니다. 주문하시려면 WhatsApp으로 메시지를 보내주세요:\n{wa}\n\n또는 이메일: {mail}\n\n이름, 서비스, 마감일을 알려주세요.",
- thanks:"천만에요. 더 도와드릴 일이 있을까요?",
- fb:"로고 디자인, 웹사이트, 가격, 주문을 도와드릴 수 있습니다. 무엇이 필요하세요?"},
-
-tr:{n:"Türkçe (Turkish)",lb:["Logo tasarımı","Web sitesi","Fiyatlar","Sipariş ver"],
- hello:"Merhaba. Ben JARVIS, {brand} yapay zeka asistanı.\n\nÇevrimiçiyim ve 7/24 size yardıma hazırım.\n\nNeye ihtiyacınız var? Logo tasarımı, web sitesi, fiyatlar veya sipariş?",
- logo:"Logo tasarımı.\n\nLütfen şunları gönderin:\n1. İşletme adı\n2. Tercih ettiğiniz renkler\n3. Stil (modern, klasik, minimal)\n\nSonra onaylamak için \"order\" yazın.",
- web:"Web sitesi.\n\nLütfen şunları söyleyin:\n1. Sitenin amacı\n2. Kaç sayfa gerekli\n3. Beğendiğiniz siteler\n\nSonra onaylamak için \"order\" yazın.",
- price:["Fiyatlar","Nihai fiyat ihtiyaçlarınıza bağlıdır."],
- order:"Harika. Sipariş vermek için bize WhatsApp'tan yazın:\n{wa}\n\nveya e-posta: {mail}\n\nLütfen adınızı, hizmeti ve teslim tarihini belirtin.",
- thanks:"Rica ederim. Başka bir konuda yardımcı olabilir miyim?",
- fb:"Logo tasarımı, web sitesi, fiyatlar veya sipariş konusunda yardımcı olabilirim. Neye ihtiyacınız var?"},
-
-id:{n:"Bahasa Indonesia",lb:["Desain logo","Website","Harga","Pesan"],
- hello:"Halo. Saya JARVIS, agen AI {brand}.\n\nSaya online dan siap membantu Anda 24/7.\n\nApa yang Anda butuhkan? Desain logo, website, harga, atau pesan?",
- logo:"Desain logo.\n\nMohon kirimkan:\n1. Nama bisnis\n2. Warna favorit\n3. Gaya (modern, klasik, minimalis)\n\nLalu ketik \"order\" untuk konfirmasi.",
- web:"Website.\n\nMohon beritahu:\n1. Untuk apa website ini\n2. Berapa halaman yang dibutuhkan\n3. Website yang Anda suka\n\nLalu ketik \"order\" untuk konfirmasi.",
- price:["Harga","Harga akhir tergantung kebutuhan Anda."],
- order:"Baik. Untuk memesan, hubungi kami lewat WhatsApp:\n{wa}\n\natau email: {mail}\n\nSertakan nama, layanan, dan tenggat waktu Anda.",
- thanks:"Sama-sama. Ada lagi yang bisa saya bantu?",
- fb:"Saya bisa membantu soal desain logo, website, harga, atau pemesanan. Apa yang Anda butuhkan?"}
+ order:"ठीक है। ऑर्डर के लिए WhatsApp पर संदेश भेजें:\n{wa}\n\nया ईमेल: {m}\n\nनाम, सेवा और डेडलाइन लिखें।",
+ thanks:"धन्यवाद। और कुछ मदद चाहिए?",
+ fb:"मैं लोगो बनाने, वेबसाइट, कीमत या ऑर्डर में मदद कर सकता हूँ। क्या चाहिए?"}
 };
 
-/* ================= LANGUAGE DETECTION ================= */
-// Latin-script languages: common words (lowercase)
-const WORDS = {
-  es:["hola","gracias","precio","precios","necesito","quiero","pedido","sitio","cuanto","cuánto","buenas","favor","diseño","página","para","tengo","cuesta"],
-  fr:["bonjour","salut","merci","prix","besoin","veux","commande","combien","tarif","tarifs","plaît","conception","je","voudrais","site"],
-  de:["hallo","danke","preis","preise","brauche","ich","möchte","bestellung","bitte","webseite","guten","wie","viel","kosten"],
-  pt:["olá","ola","obrigado","obrigada","preço","preco","preciso","quero","pedido","quanto","você","voce","bom","dia"],
-  id:["halo","terima","kasih","harga","saya","butuh","ingin","pesan","berapa","tolong","selamat","mau"],
-  tr:["merhaba","teşekkür","tesekkur","fiyat","lazım","istiyorum","sipariş","siparis","kaç","nasıl","selam"],
-  tg:["enna","epdi","vendum","venum","venuma","illa","illana","irukku","panni","pannunga","kudunga","thambi","nanba","vanakkam","evlo","evvalavu","vilai","naan","ungal","ungalukku","enakku","seri","sollunga","nandri","anuppunga"]
-};
-const ACCENT = [
-  ["es",/[ñ¿¡]/],["fr",/[çèêëàâôûœ]/],["de",/[äöüß]/],["pt",/[ãõ]/],["tr",/[şğıİ]/]
-];
-
-function detect(text){
-  // 1) Script-based (very reliable)
-  if (/[\u0B80-\u0BFF]/.test(text)) return "ta";
-  if (/[\u0D80-\u0DFF]/.test(text)) return "si";
-  if (/[\u0900-\u097F]/.test(text)) return "hi";
-  if (/[\u0980-\u09FF]/.test(text)) return "bn";
-  if (/[\u0C00-\u0C7F]/.test(text)) return "te";
-  if (/[\u0D00-\u0D7F]/.test(text)) return "ml";
-  if (/[\u0600-\u06FF]/.test(text)) return /[ٹڈڑںھےگچپ]/.test(text) ? "ur" : "ar";
-  if (/[\u3040-\u30FF]/.test(text)) return "ja";
-  if (/[\uAC00-\uD7AF]/.test(text)) return "ko";
-  if (/[\u4E00-\u9FFF]/.test(text)) return "zh";
-  if (/[\u0400-\u04FF]/.test(text)) return "ru";
-  // 2) Latin-script: score by words + accents
-  const tokens = text.toLowerCase().split(/[^a-zA-Zà-ÿşğıİñ¿¡'’]+/).filter(Boolean);
-  const score = {};
-  for (const k in WORDS) score[k] = tokens.filter(t => WORDS[k].includes(t)).length;
-  for (const [k, re] of ACCENT) if (re.test(text.toLowerCase())) score[k] = (score[k] || 0) + 1;
-  let best = null, max = 0;
-  for (const k in score) if (score[k] > max) { max = score[k]; best = k; }
-  return best;            // null = not sure, keep current language
+/* ============ LANGUAGE DETECTION ============ */
+const TANGLISH = ["enna","epdi","vendum","venum","venuma","illa","illana","irukku","pannunga","kudunga","vanakkam","evlo","vilai","naan","ungal","ungalukku","enakku","seri","sollunga","nandri","anuppunga","peyar","panni","aasai"];
+function detect(t){
+  if (/[\u0B80-\u0BFF]/.test(t)) return "ta";
+  if (/[\u0D80-\u0DFF]/.test(t)) return "si";
+  if (/[\u0900-\u097F]/.test(t)) return "hi";
+  const w = t.toLowerCase().split(/[^a-z]+/);
+  return w.some(x => TANGLISH.includes(x)) ? "tg" : null;
 }
 
-/* ================= INTENT (multilingual keywords) ================= */
+/* ============ INTENT + LOGO UNDERSTANDING ============ */
 const K = {
-  order:["order","buy","confirm","pedido","pedir","commande","commander","bestell","pesan","sipariş","siparis","заказ","订购","下单","订单","注文","주문","ஆர்டர்","ඇණවුම","ඕඩර්","ऑर्डर","आर्डर","طلب","آرڈر","অর্ডার","ఆర్డర్","ഓർഡർ"],
-  price:["price","cost","how much","vilai","evlo","evvalavu","precio","cuánto","cuanto","prix","combien","tarif","preis","preço","preco","quanto","harga","berapa","fiyat","цен","сколько","价","多少","価格","料金","値段","いくら","가격","얼마","விலை","எவ்வளவு","கட்டணம்","මිල","कीमत","दाम","मूल्य","कितना","कितने","سعر","أسعار","اسعار","بكم","قیمت","کتنا","দাম","মূল্য","কত","ధర","ఎంత","വില","എത്ര"],
-  logo:["logo","лого","标志","徽标","ロゴ","로고","லோகோ","ලාංඡන","ලෝගෝ","लोगो","شعار","لوغو","لوجو","لوگو","লোগো","లోగో","ലോഗോ"],
-  web:["web","site","sitio","página","pagina","sayfa","situs","seite","сайт","网","ウェブ","ホームページ","サイト","웹","வெப்","இணையதள","වෙබ්","वेब","موقع","ويب","ویب","ওয়েব","వెబ్","വെബ്"],
-  thanks:["thank","nandri","gracias","merci","danke","obrigad","спасибо","谢谢","感谢","ありがとう","감사","고마","teşekkür","tesekkur","terima kasih","நன்றி","ස්තූති","धन्यवाद","शुक्रिया","شكر","شکریہ","ধন্যবাদ","ధన్యవాదాలు","നന്ദി"]
+  order:["order","buy","confirm","ஆர்டர்","ඇණවුම","ऑर्डर"],
+  price:["price","cost","how much","vilai","evlo","விலை","මිල","कीमत","दाम"],
+  logo:["logo","லோகோ","ලාංඡන","ලෝගෝ","लोगो","brand","design"],
+  web:["web","site","வெப்","වෙබ්","वेब"],
+  thanks:["thank","nandri","நன்றி","ස්තූති","धन्यवाद"]
 };
-const HELLO_TOKENS = ["hi","hii","hello","hey","hai","vanakkam","hola","bonjour","salut","hallo","olá","ola","halo","merhaba","selam","привет"];
-const HELLO_INCLUDES = ["வணக்கம்","ආයුබෝවන්","හෙලෝ","नमस्ते","हैलो","مرحبا","السلام","سلام","اهلا","أهلا","নমস্কার","হ্যালো","నమస్కారం","హలో","നമസ്കാരം","ഹലോ","здравствуйте","你好","您好","こんにちは","안녕"];
+const HELLO = ["hi","hii","hello","hey","hai","vanakkam","வணக்கம்","ආයුබෝවන්","नमस्ते"];
 
-function intent(text){
-  const s = text.toLowerCase();
-  for (const key of ["order","price","logo","web","thanks"])
-    if (K[key].some(w => s.includes(w))) return key;
-  const tokens = s.split(/[\s,.!?]+/).filter(Boolean);
-  if (tokens.some(t => HELLO_TOKENS.includes(t))) return "hello";
-  if (s.length < 30 && HELLO_INCLUDES.some(w => s.includes(w))) return "hello";
+// mood: keywords (English + Tanglish + Tamil/Sinhala/Hindi), palette, tagline, AI description
+const MOODS = {
+  love:  {kw:["love","family","mom","amma","appa","heart","wedding","kadhal","anbu","அன்பு","அம்மா","காதல்","ආදරය","අම්මා","प्यार","परिवार"],c:["#e11d48","#f97316"],tag:"Made with love",ai:"heart symbol, warm, caring"},
+  dream: {kw:["dream","first","start","new","begin","hope","kanavu","kanavu","கனவு","ஆரம்ப","සිහින","सपना"],c:["#2563eb","#7c3aed"],tag:"Dream big",ai:"rising star, rocket, hopeful"},
+  power: {kw:["strong","power","bold","gym","fight","fit","valimai","பலம்","வலிமை","ශක්ති","ताकत"],c:["#111827","#d4a017"],tag:"Built strong",ai:"lightning bolt, strong, powerful"},
+  nature:{kw:["nature","organic","green","farm","garden","herbal","iyarkai","இயற்கை","ස්වභාවය","प्रकृति"],c:["#15803d","#65a30d"],tag:"Naturally yours",ai:"leaf, natural, organic"},
+  joy:   {kw:["happy","fun","kids","joy","sweet","cake","food","magizhchi","மகிழ்ச்சி","සතුට","खुशी"],c:["#f59e0b","#ef4444"],tag:"Pure joy",ai:"sun, cheerful, bright"}
+};
+const MOOD_KW = Object.fromEntries(Object.entries(MOODS).map(([k, v]) => [k, v.kw]));
+const COLORS = {red:"#e11d48",sivappu:"#e11d48",blue:"#2563eb",neelam:"#2563eb",green:"#16a34a",pachai:"#16a34a",yellow:"#eab308",orange:"#f97316",purple:"#7c3aed",pink:"#ec4899",black:"#111827",gold:"#d4a017",teal:"#0d9488"};
+const STYLES = {minimal:["minimal","simple","clean"],classic:["classic","traditional","vintage"],modern:["modern","new look","trendy"]};
+
+function intent(t){
+  const s = t.toLowerCase();
+  for (const k of ["order","price","logo","web","thanks"]) if (K[k].some(w => s.includes(w))) return k;
+  if (s.split(/[\s,.!?]+/).some(w => HELLO.includes(w))) return "hello";
   return "fb";
 }
+function pick(s, map){ for (const k in map) if (map[k].some(w => s.includes(w))) return k; return null; }
+function feelsEmotional(s){ return /feel|emotion|special|means|memory|உணர்|දැනෙ|महसूस|unar|romba/.test(s); }
 
-/* ================= BUILD REPLY ================= */
-function build(key){
-  const L = LANG[cur];
-  const fill = t => t.replace("{brand}", CONFIG.brand)
-                     .replace("{wa}", "https://wa.me/" + CONFIG.whatsapp)
-                     .replace("{mail}", CONFIG.email);
-  if (key === "price")
-    return L.price[0] + "\n\n• " + CONFIG.prices.logo + "\n• " + CONFIG.prices.website +
-           "\n• " + CONFIG.prices.social + "\n\n" + L.price[1];
-  return fill(L[key]);
+function extractName(t){
+  let m = t.match(/["“']([^"”']{2,28})["”']/);
+  if (!m) m = t.match(/(?:name is|named|called|peyar|பெயர்|නම|नाम|business is|brand is)\s*(?:is|:)?\s*([^,.!?\n]{2,40})/i);
+  if (!m) return null;
+  return m[1].split(/\s+(?:and|but|because|it|ennaku|enakku|logo)\s+/i)[0].trim().slice(0,28);
 }
 
-/* ================= UI ================= */
-const chat = document.getElementById("chat");
-const input = document.getElementById("input");
-const core = document.getElementById("core");
-const sel = document.getElementById("langSel");
-const controls = document.getElementById("controls");
-const BTN_KEYS = ["logo","web","price","order"];
-let cur = "en";
-let manual = false;
+/* ============ LOGO ENGINE (SVG, runs in the browser) ============ */
+const esc = s => s.replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+function shade(hex, amt){
+  const n = parseInt(hex.slice(1), 16), f = v => Math.max(0, Math.min(255, v + amt));
+  return "#" + [(n >> 16) & 255, (n >> 8) & 255, n & 255].map(v => f(v).toString(16).padStart(2, "0")).join("");
+}
+function star(cx, cy, R, r){
+  let p = [];
+  for (let i = 0; i < 10; i++){
+    const a = Math.PI / 5 * i - Math.PI / 2, rad = i % 2 ? r : R;
+    p.push((cx + rad * Math.cos(a)).toFixed(1) + "," + (cy + rad * Math.sin(a)).toFixed(1));
+  }
+  return `<polygon points="${p.join(" ")}"/>`;
+}
+function symbol(mood, name){
+  switch (mood){
+    case "love":   return `<path d="M256 285C140 205 165 105 220 105c24 0 36 18 36 32 0-14 12-32 36-32 55 0 80 100-36 180z"/>`;
+    case "dream":  return star(256, 195, 90, 38);
+    case "power":  return `<path d="M285 95l-80 110h48l-26 90 88-125h-50z"/>`;
+    case "nature": return `<path d="M256 290C160 265 150 150 275 100c70 55 60 155-19 190z"/><path d="M256 290C256 220 262 170 275 130" stroke="#0003" stroke-width="6" fill="none"/>`;
+    case "joy":    { let r = ""; for (let i = 0; i < 8; i++) r += `<rect x="251" y="95" width="10" height="34" rx="5" transform="rotate(${i * 45} 256 195)"/>`; return `<circle cx="256" cy="195" r="44"/>` + r; }
+    default:       return `<text x="256" y="238" text-anchor="middle" font-size="130" font-weight="800" font-family="Georgia,serif">${esc(name[0].toUpperCase())}</text>`;
+  }
+}
+function makeLogo(o){
+  const M = MOODS[o.mood] || {c:["#0284c7","#38bdf8"],tag:"Quality first"};
+  const c1 = o.color || M.c[0], c2 = o.color ? shade(o.color, 60) : M.c[1];
+  const name = o.name.toUpperCase(), size = Math.max(26, Math.min(58, 520 / name.length));
+  const minimal = o.style === "minimal", classic = o.style === "classic";
+  const fill = minimal ? c1 : "#fff";
+  const badge = minimal ? "" : classic
+    ? `<rect x="106" y="45" width="300" height="300" rx="40" fill="url(#g)"/><rect x="120" y="59" width="272" height="272" rx="30" fill="none" stroke="#fff" stroke-opacity=".6" stroke-width="3"/>`
+    : `<circle cx="256" cy="195" r="150" fill="url(#g)"/>`;
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="${c1}"/><stop offset="1" stop-color="${c2}"/></linearGradient></defs><rect width="512" height="512" fill="#fff"/>${badge}<g fill="${fill}">${symbol(o.mood, o.name)}</g><text x="256" y="425" text-anchor="middle" font-size="${size}" font-weight="800" letter-spacing="4" fill="${c1}" font-family="Segoe UI,Arial,sans-serif">${esc(name)}</text><text x="256" y="463" text-anchor="middle" font-size="19" letter-spacing="5" fill="#64748b" font-family="Segoe UI,Arial,sans-serif">${M.tag.toUpperCase()}</text></svg>`;
+}
+function download(href, file){ const a = document.createElement("a"); a.href = href; a.download = file; document.body.appendChild(a); a.click(); a.remove(); }
+function svgToPng(svg, file){
+  const img = new Image();
+  img.onload = () => {
+    const c = document.createElement("canvas"); c.width = c.height = 1024;
+    c.getContext("2d").drawImage(img, 0, 0, 1024, 1024);
+    download(c.toDataURL("image/png"), file);
+  };
+  img.src = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(svg);
+}
+
+/* ============ UI ============ */
+const $ = id => document.getElementById(id);
+const chat = $("chat"), input = $("input"), core = $("core"), sel = $("langSel"), controls = $("controls");
+const BTN = ["logo","web","price","order"];
+let cur = "en", manual = false;
+let ctx = {awaiting:false, mood:null, style:null, color:null, last:null};
+
+const fmt = t => t.replace("{b}", CONFIG.brand).replace("{m}", CONFIG.email)
+  .replace("{wa}", "https://wa.me/" + CONFIG.whatsapp + (ctx.last ? "?text=" + encodeURIComponent("Hi, I want this logo: " + ctx.last) : ""));
 
 function fillText(el, text){
-  text.split(/(https?:\/\/[^\s]+)/g).forEach((part, i) => {
-    if (i % 2) {
-      const a = document.createElement("a");
-      a.href = part; a.target = "_blank"; a.rel = "noopener"; a.textContent = part;
-      el.appendChild(a);
-    } else el.appendChild(document.createTextNode(part));
+  text.split(/(https?:\/\/[^\s]+)/g).forEach((p, i) => {
+    if (i % 2){ const a = document.createElement("a"); a.href = p; a.target = "_blank"; a.rel = "noopener"; a.textContent = p; el.appendChild(a); }
+    else el.appendChild(document.createTextNode(p));
   });
 }
-
 function add(who, text){
-  const d = document.createElement("div");
-  d.className = "msg " + who;
-  const l = document.createElement("div");
-  l.className = "label";
-  l.textContent = who === "user" ? "YOU" : "JARVIS";
-  const b = document.createElement("div");
-  b.dir = "auto";
-  if (text) fillText(b, text);
-  d.append(l, b);
-  chat.appendChild(d);
-  chat.scrollTop = chat.scrollHeight;
-  return d;
+  const d = document.createElement("div"); d.className = "msg " + who;
+  const l = document.createElement("div"); l.className = "label"; l.textContent = who === "user" ? "YOU" : "JARVIS";
+  const b = document.createElement("div"); b.dir = "auto"; if (text) fillText(b, text);
+  d.append(l, b); chat.appendChild(d); chat.scrollTop = chat.scrollHeight; return d;
+}
+function mkBtn(label, fn){ const b = document.createElement("button"); b.className = "btn"; b.textContent = label; b.onclick = fn; return b; }
+
+function say(text, delay = 600, after){
+  const t = add("jarvis", ""), body = t.lastChild;
+  body.className = "typing"; body.innerHTML = "<span></span><span></span><span></span>";
+  core.classList.add("thinking");
+  setTimeout(() => { t.remove(); core.classList.remove("thinking"); add("jarvis", text); if (after) after(); }, delay);
 }
 
 function reply(key){
-  const t = add("jarvis", "");
-  const body = t.lastChild;
-  body.className = "typing";
-  body.innerHTML = "<span></span><span></span><span></span>";
-  core.classList.add("thinking");
-  setTimeout(() => {
-    t.remove();
-    core.classList.remove("thinking");
-    add("jarvis", build(key));
-  }, 600);
+  const L = LANG[cur];
+  if (key === "price") return say(L.price[0] + "\n\n• " + CONFIG.prices.join("\n• ") + "\n\n" + L.price[1]);
+  if (key === "hello") return say(fmt(L.hello));
+  if (key === "logo"){ ctx.awaiting = true; return say(L.ask); }
+  say(fmt(L[key]));
+}
+
+function showLogo(o){
+  const L = LANG[cur], svg = makeLogo(o);
+  ctx.last = o.name; ctx.awaiting = false;
+  say(L.emo.replace(/\{n\}/g, o.name), 1400, () => {
+    const card = document.createElement("div"); card.className = "card";
+    const box = document.createElement("div"); box.innerHTML = svg; card.appendChild(box);
+    const note = document.createElement("div"); note.className = "note"; note.dir = "auto"; note.textContent = L.note.replace("{n}", o.name); card.appendChild(note);
+    const row = document.createElement("div"); row.className = "row";
+    const file = o.name.replace(/\W+/g, "_") || "logo";
+    row.append(
+      mkBtn(L.dl, () => svgToPng(svg, file + ".png")),
+      mkBtn(L.sv, () => download("data:image/svg+xml;charset=utf-8," + encodeURIComponent(svg), file + ".svg")),
+      mkBtn(L.ai, () => aiArt(o)),
+      mkBtn(L.od, () => { add("user", L.od); reply("order"); })
+    );
+    card.appendChild(row); chat.appendChild(card); chat.scrollTop = chat.scrollHeight;
+    ctx.mood = ctx.style = ctx.color = null;
+  });
+}
+
+function aiArt(o){
+  const L = LANG[cur], M = MOODS[o.mood] || {ai:"abstract symbol"};
+  const wait = add("jarvis", L.wait);
+  const prompt = `professional minimalist vector logo for a brand called ${o.name}, ${M.ai}, ${o.style || "modern"} style, flat design, centered, white background`;
+  const url = "https://image.pollinations.ai/prompt/" + encodeURIComponent(prompt) + "?width=512&height=512&nologo=true&seed=" + Math.floor(Math.random() * 99999);
+  const card = document.createElement("div"); card.className = "card";
+  const img = new Image(); img.alt = "AI logo for " + o.name;
+  img.onload = () => {
+    wait.remove(); card.appendChild(img);
+    const row = document.createElement("div"); row.className = "row";
+    row.append(mkBtn(L.dl, () => window.open(url, "_blank")), mkBtn(L.ai, () => aiArt(o)));
+    card.appendChild(row); chat.appendChild(card); chat.scrollTop = chat.scrollHeight;
+  };
+  img.onerror = () => { wait.remove(); add("jarvis", L.fail); };
+  img.src = url;
+}
+
+/* Decide: is this message part of a logo request? */
+function handleLogo(text){
+  const s = text.toLowerCase();
+  ctx.mood = pick(s, MOOD_KW) || ctx.mood;
+  ctx.style = pick(s, STYLES) || ctx.style;
+  ctx.color = COLORS[Object.keys(COLORS).find(c => s.includes(c))] || ctx.color;
+  let name = extractName(text);
+  if (!name && ctx.awaiting){
+    const guess = text.split(/[,.\n]/)[0].trim();
+    if (guess.length >= 2 && guess.length <= 28 && !K.logo.some(w => guess.toLowerCase() === w)) name = guess;
+  }
+  if (!name){ ctx.awaiting = true; say(LANG[cur].ask); return; }
+  if (!ctx.mood && feelsEmotional(s)) ctx.mood = "love";
+  showLogo({name, mood: ctx.mood, style: ctx.style, color: ctx.color});
 }
 
 function renderButtons(){
   controls.innerHTML = "";
-  LANG[cur].lb.forEach((label, i) => {
-    const b = document.createElement("button");
-    b.className = "btn";
-    b.textContent = label;
-    b.onclick = () => { add("user", label); reply(BTN_KEYS[i]); };
-    controls.appendChild(b);
-  });
+  LANG[cur].lb.forEach((label, i) => controls.appendChild(mkBtn(label, () => { add("user", label); reply(BTN[i]); })));
 }
-
 function setLang(k){
-  cur = k;
-  renderButtons();
+  cur = k; renderButtons();
   sel.options[0].textContent = "Auto-detect (" + LANG[cur].n + ")";
   document.documentElement.lang = k === "tg" ? "ta-Latn" : k;
 }
-
-function manualLang(v){
-  if (v === "auto") { manual = false; setLang(cur); }
-  else { manual = true; setLang(v); }
-}
+function manualLang(v){ if (v === "auto"){ manual = false; setLang(cur); } else { manual = true; setLang(v); } }
 
 function send(){
-  const text = input.value.trim();
-  if (!text) return;
-  input.value = "";
-  add("user", text);
-  if (!manual) { const d = detect(text); if (d) setLang(d); }
-  reply(intent(text));
+  const text = input.value.trim(); if (!text) return;
+  input.value = ""; add("user", text);
+  if (!manual){ const d = detect(text); if (d) setLang(d); }
+  const key = intent(text);
+  if (key === "logo" || (ctx.awaiting && !["order","price","thanks"].includes(key)) || (key === "fb" && extractName(text) && /logo|லோகோ/i.test(text))) return handleLogo(text);
+  reply(key);
 }
 
-/* Init */
-(function(){
-  const auto = document.createElement("option");
-  auto.value = "auto"; sel.appendChild(auto);
-  Object.keys(LANG).forEach(k => {
-    const o = document.createElement("option");
-    o.value = k; o.textContent = LANG[k].n; sel.appendChild(o);
-  });
-  sel.value = "auto";
-  setLang("en");
-  add("jarvis", build("hello"));
+(function init(){
+  const auto = document.createElement("option"); auto.value = "auto"; sel.appendChild(auto);
+  Object.keys(LANG).forEach(k => { const o = document.createElement("option"); o.value = k; o.textContent = LANG[k].n; sel.appendChild(o); });
+  sel.value = "auto"; setLang("en"); add("jarvis", fmt(LANG.en.hello));
 })();
 </script>
 </body>
