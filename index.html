@@ -65,6 +65,8 @@ const CONFIG = {
   brand: "IZAX",
   whatsapp: "94XXXXXXXXX",        // country code, no +
   email: "yourmail@example.com",
+  web3formsKey: "YOUR_WEB3FORMS_KEY",   // free key from web3forms.com (orders arrive in your email)
+  payLinks: {logo:"", website:"", social:""}, // paste Stripe / PayPal / PayHere payment links here
   prices: ["Logo Design: from 15 USD", "Website: from 60 USD", "Social media post pack: from 10 USD"]
 };
 
@@ -205,6 +207,7 @@ function symbol(mood, name){
     default:       return `<text x="256" y="238" text-anchor="middle" font-size="130" font-weight="800" font-family="Georgia,serif">${esc(name[0].toUpperCase())}</text>`;
   }
 }
+const WM=`<text x="256" y="290" text-anchor="middle" font-size="64" font-weight="800" fill="#000" opacity=".12" transform="rotate(-25 256 256)" font-family="Arial,sans-serif">IZAX PREVIEW</text>`;
 function makeLogo(o){
   const M = MOODS[o.mood] || {c:["#0284c7","#38bdf8"],tag:"Quality first"};
   const c1 = o.color || M.c[0], c2 = o.color ? shade(o.color, 60) : M.c[1];
@@ -214,7 +217,7 @@ function makeLogo(o){
   const badge = minimal ? "" : classic
     ? `<rect x="106" y="45" width="300" height="300" rx="40" fill="url(#g)"/><rect x="120" y="59" width="272" height="272" rx="30" fill="none" stroke="#fff" stroke-opacity=".6" stroke-width="3"/>`
     : `<circle cx="256" cy="195" r="150" fill="url(#g)"/>`;
-  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="${c1}"/><stop offset="1" stop-color="${c2}"/></linearGradient></defs><rect width="512" height="512" fill="#fff"/>${badge}<g fill="${fill}">${symbol(o.mood, o.name)}</g><text x="256" y="425" text-anchor="middle" font-size="${size}" font-weight="800" letter-spacing="4" fill="${c1}" font-family="Segoe UI,Arial,sans-serif">${esc(name)}</text><text x="256" y="463" text-anchor="middle" font-size="19" letter-spacing="5" fill="#64748b" font-family="Segoe UI,Arial,sans-serif">${M.tag.toUpperCase()}</text></svg>`;
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="${c1}"/><stop offset="1" stop-color="${c2}"/></linearGradient></defs><rect width="512" height="512" fill="#fff"/>${badge}<g fill="${fill}">${symbol(o.mood, o.name)}</g><text x="256" y="425" text-anchor="middle" font-size="${size}" font-weight="800" letter-spacing="4" fill="${c1}" font-family="Segoe UI,Arial,sans-serif">${esc(name)}</text><text x="256" y="463" text-anchor="middle" font-size="19" letter-spacing="5" fill="#64748b" font-family="Segoe UI,Arial,sans-serif">${M.tag.toUpperCase()}</text>${o.wm?WM:""}</svg>`;
 }
 function download(href, file){ const a = document.createElement("a"); a.href = href; a.download = file; document.body.appendChild(a); a.click(); a.remove(); }
 function svgToPng(svg, file){
@@ -260,6 +263,7 @@ function say(text, delay = 600, after){
 
 function reply(key){
   const L = LANG[cur];
+  if (key === "order") return startOrder();
   if (key === "price") return say(L.price[0] + "\n\n• " + CONFIG.prices.join("\n• ") + "\n\n" + L.price[1]);
   if (key === "hello") return say(fmt(L.hello));
   if (key === "logo"){ ctx.awaiting = true; return say(L.ask); }
@@ -267,8 +271,8 @@ function reply(key){
 }
 
 function showLogo(o){
-  const L = LANG[cur], svg = makeLogo(o);
-  ctx.last = o.name; ctx.awaiting = false;
+  const L = LANG[cur], svg = makeLogo({...o, wm:true});
+  ctx.last = o.name; ctx.logoObj = o; ctx.awaiting = false;
   say(L.emo.replace(/\{n\}/g, o.name), 1400, () => {
     const card = document.createElement("div"); card.className = "card";
     const box = document.createElement("div"); box.innerHTML = svg; card.appendChild(box);
@@ -279,7 +283,7 @@ function showLogo(o){
       mkBtn(L.dl, () => svgToPng(svg, file + ".png")),
       mkBtn(L.sv, () => download("data:image/svg+xml;charset=utf-8," + encodeURIComponent(svg), file + ".svg")),
       mkBtn(L.ai, () => aiArt(o)),
-      mkBtn(L.od, () => { add("user", L.od); reply("order"); })
+      mkBtn(L.od, () => { add("user", L.od); startOrder("logo"); })
     );
     card.appendChild(row); chat.appendChild(card); chat.scrollTop = chat.scrollHeight;
     ctx.mood = ctx.style = ctx.color = null;
@@ -319,6 +323,70 @@ function handleLogo(text){
   showLogo({name, mood: ctx.mood, style: ctx.style, color: ctx.color});
 }
 
+
+/* ============ ORDER WIZARD (takes orders 24/7) ============ */
+const SERV = {logo:["Logo Design",15], website:["Website",60], social:["Social media post pack",10]};
+const W = {
+en:{svc:"Which service do you want?",det:"Tell me the details: what you need, style, pages, anything important.",nm:"Your name?",ct:"Your WhatsApp number or email, so we can reach you?",dl:"What is your deadline? (e.g. 3 days)",sum:"Please check your order:",ok:"Confirm Order",no:"Cancel",sending:"Sending your order...",done:"Order {id} received! We will confirm on WhatsApp/email shortly. Pay below to start, and your clean files are delivered after payment.",pay:"Pay now",fail:"I could not send it automatically. Tap WhatsApp to send your order.",cancel:"Order cancelled. I am here whenever you need me."},
+tg:{svc:"Entha service venum?",det:"Details sollunga: enna venum, style, evlo pages, mukkiyamana vishayam.",nm:"Ungal peyar?",ct:"Ungal WhatsApp number illa email sollunga, naanga contact panna.",dl:"Deadline enna? (eg. 3 days)",sum:"Ungal order check pannunga:",ok:"Order confirm",no:"Cancel",sending:"Order anuppuren...",done:"Order {id} vandhuduchu! Seekiram WhatsApp/email-la confirm pannuvom. Keezha pay panni start pannunga, payment aana apparam clean files tharuvom.",pay:"Ippo pay pannu",fail:"Automatic-a anuppa mudiyala. WhatsApp-a thattunga, order anuppunga.",cancel:"Order cancel aachu. Eppo venumnalum naan irukken."},
+ta:{svc:"எந்த சேவை வேண்டும்?",det:"விவரங்களை சொல்லுங்கள்: என்ன வேண்டும், style, pages, முக்கியமானவை.",nm:"உங்கள் பெயர்?",ct:"உங்கள் WhatsApp எண் அல்லது email?",dl:"Deadline என்ன? (எ.கா. 3 நாட்கள்)",sum:"உங்கள் order-ஐ சரிபாருங்கள்:",ok:"Order உறுதி",no:"ரத்து",sending:"Order அனுப்புகிறேன்...",done:"Order {id} கிடைத்தது! விரைவில் WhatsApp/email-ல் உறுதி செய்வோம். கீழே பணம் செலுத்துங்கள், பணம் வந்ததும் clean files தருவோம்.",pay:"இப்போது செலுத்து",fail:"தானாக அனுப்ப முடியவில்லை. WhatsApp-ஐ தட்டி order அனுப்புங்கள்.",cancel:"Order ரத்து. எப்போது வேண்டுமானாலும் நான் இருக்கிறேன்."}
+};
+const T = () => W[cur] || W.en;
+function choices(list){
+  const c = document.createElement("div"); c.className = "row";
+  list.forEach(([l, f]) => c.appendChild(mkBtn(l, () => { c.remove(); f(); })));
+  chat.appendChild(c); chat.scrollTop = chat.scrollHeight;
+}
+function startOrder(svc){
+  ctx.ord = {step: svc ? "det" : "svc", svc: svc || null};
+  if (svc === "logo" && ctx.logoObj){
+    const o = ctx.logoObj;
+    ctx.ord.det = `Logo for "${o.name}" | mood: ${o.mood || "-"} | style: ${o.style || "modern"} | color: ${o.color || "auto"}`;
+    ctx.ord.step = "nm";
+  }
+  nextStep();
+}
+function nextStep(){
+  const o = ctx.ord, t = T();
+  if (o.step === "svc") return say(t.svc, 400, () => choices(Object.keys(SERV).map(k => [SERV[k][0], () => { add("user", SERV[k][0]); startOrder(k); }])));
+  if (o.step === "cf"){
+    const s = SERV[o.svc];
+    return say(`${t.sum}\n\n• ${s[0]} (from ${s[1]} USD)\n• ${o.det}\n• ${o.nm} / ${o.ct}\n• ${o.dl}`, 500, () => choices([
+      [t.ok, () => { add("user", t.ok); submitOrder(); }],
+      [t.no, () => { add("user", t.no); ctx.ord = null; say(t.cancel); }]]));
+  }
+  say(t[o.step]);
+}
+function handleOrder(text){
+  const o = ctx.ord;
+  if (/^(cancel|stop)$/i.test(text)){ ctx.ord = null; return say(T().cancel); }
+  if (o.step === "svc" || o.step === "cf") return nextStep();
+  o[o.step] = text.slice(0, 500);
+  o.step = {det:"nm", nm:"ct", ct:"dl", dl:"cf"}[o.step];
+  nextStep();
+}
+async function submitOrder(){
+  const o = ctx.ord, t = T(), s = SERV[o.svc], id = "IZ" + Date.now().toString(36).toUpperCase();
+  say(t.sending, 500);
+  const logo = o.svc === "logo" && ctx.logoObj ? makeLogo(ctx.logoObj) : "";
+  const msg = `Order ${id}\nService: ${s[0]} (from ${s[1]} USD)\nDetails: ${o.det}\nName: ${o.nm}\nContact: ${o.ct}\nDeadline: ${o.dl}\nLanguage: ${cur}` + (logo ? `\n\nCLEAN LOGO SVG (save as .svg):\n${logo}` : "");
+  const wa = "https://wa.me/" + CONFIG.whatsapp + "?text=" + encodeURIComponent(`Hi IZAX, order ${id}: ${s[0]} for ${o.nm}`);
+  let ok = false;
+  try {
+    const r = await fetch("https://api.web3forms.com/submit", {method:"POST", headers:{"Content-Type":"application/json", Accept:"application/json"},
+      body: JSON.stringify({access_key: CONFIG.web3formsKey, subject: `NEW ORDER ${id} - ${s[0]}`, from_name: "JARVIS IZAX", name: o.nm, ...(o.ct.includes("@") ? {email: o.ct} : {}), message: msg})});
+    ok = (await r.json()).success;
+  } catch (e) {}
+  ctx.ord = null;
+  setTimeout(() => {
+    add("jarvis", (ok ? t.done : t.fail).replace("{id}", id));
+    const l = [];
+    if (ok && CONFIG.payLinks[o.svc]) l.push([t.pay, () => window.open(CONFIG.payLinks[o.svc], "_blank")]);
+    l.push(["WhatsApp", () => window.open(wa, "_blank")]);
+    choices(l);
+  }, 1300);
+}
+
 function renderButtons(){
   controls.innerHTML = "";
   LANG[cur].lb.forEach((label, i) => controls.appendChild(mkBtn(label, () => { add("user", label); reply(BTN[i]); })));
@@ -333,6 +401,7 @@ function manualLang(v){ if (v === "auto"){ manual = false; setLang(cur); } else 
 function send(){
   const text = input.value.trim(); if (!text) return;
   input.value = ""; add("user", text);
+  if (ctx.ord) return handleOrder(text);
   if (!manual){ const d = detect(text); if (d) setLang(d); }
   const key = intent(text);
   if (key === "logo" || (ctx.awaiting && !["order","price","thanks"].includes(key)) || (key === "fb" && extractName(text) && /logo|லோகோ/i.test(text))) return handleLogo(text);
